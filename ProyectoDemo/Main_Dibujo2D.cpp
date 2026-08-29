@@ -11,7 +11,7 @@ const GLint WIDTH = 800, HEIGHT = 600;
 int main() {
 	glfwInit();
 
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Dibujo de Primitivas en 2D", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Gonzalez Fernandez Jonathan Uriel - Dibujo de Primitivas en 2D", NULL, NULL);
 	glfwSetFramebufferSizeCallback(window, resize);
 
 	if (window == NULL)
