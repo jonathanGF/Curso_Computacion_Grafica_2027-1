@@ -29,7 +29,7 @@ int main() {
 
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Proyecciones y transformaciones basicas_Jonathan_Gonzalez", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "P3_Jonathan_Gonzalez", nullptr, nullptr);
 
 	int screenWidth, screenHeight;
 
@@ -121,12 +121,12 @@ int main() {
 
 	// use with Perspective Projection
 	float vertices[] = {
-		-0.5f, -0.5f, 0.5f, 1.0f, 2.0f,0.0f,//Front
-		0.5f, -0.5f, 0.5f,  1.0f, 2.0f,0.0f,
-		0.5f,  0.5f, 0.5f,  1.0f, 2.0f,0.0f,
-		0.5f,  0.5f, 0.5f,  1.0f, 2.0f,0.0f,
-		-0.5f,  0.5f, 0.5f, 1.0f, 2.0f,0.0f,
-		-0.5f, -0.5f, 0.5f, 1.0f, 2.0f,0.0f,
+		-0.5f, -0.5f, 0.5f, 1.0f, 0.0f,0.0f,//Front
+		0.5f, -0.5f, 0.5f,  1.0f, 0.0f,0.0f,
+		0.5f,  0.5f, 0.5f,  1.0f, 0.0f,0.0f,
+		0.5f,  0.5f, 0.5f,  1.0f, 0.0f,0.0f,
+		-0.5f,  0.5f, 0.5f, 1.0f, 0.0f,0.0f,
+		-0.5f, -0.5f, 0.5f, 1.0f, 0.0f,0.0f,
 		
 	    -0.5f, -0.5f,-0.5f, 0.0f, 1.0f,0.0f,//Back
 		 0.5f, -0.5f,-0.5f, 0.0f, 1.0f,0.0f,
@@ -142,12 +142,12 @@ int main() {
 		 0.5f,  0.5f,  0.5f,  0.0f, 0.0f,1.0f,
 		 0.5f,  -0.5f, 0.5f, 0.0f, 0.0f,1.0f,
       
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f,0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,0.0f,
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f,0.0f,
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f,0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f, 1.0f,0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f,0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.5f,0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 0.5f,0.0f,
+		-0.5f, -0.5f, -0.5f,  1.0f, 0.5f,0.0f,
+		-0.5f, -0.5f, -0.5f,  1.0f, 0.5f,0.0f,
+		-0.5f, -0.5f,  0.5f,  1.0f, 0.5f,0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.5f,0.0f,
 		
 		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,1.0f,
 		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,1.0f,
@@ -215,33 +215,101 @@ int main() {
 
 		// Draw our first triangle
 		ourShader.Use();
-		glm::mat4 model = glm::mat4(1);
-		glm::mat4 view = glm::mat4(1);
 
-		view = glm::translate(view, glm::vec3(0.0f,0.0f,-13.0f));
-		model = glm::rotate(model, 0.5f, glm::vec3(1.0f, 0.0f, 1.0f)); // use to compare orthographic and perspective projection
-		model = glm::scale(model, glm::vec3(7.0f, 1.0f, 1.0f));
-		//view = glm::translate( view, glm::vec3( screenWidth / 2, screenHeight / 3,-900.0f ) ); // use with orthographic projection
-		
+		// Ajuste de camara para encuadrar los 8 niveles de la torre
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -14.0f));
+
 		GLint modelLoc = glGetUniformLocation(ourShader.Program, "model");
 		GLint viewLoc = glGetUniformLocation(ourShader.Program, "view");
 		GLint projecLoc = glGetUniformLocation(ourShader.Program, "projection");
-		
+
 		glUniformMatrix4fv(projecLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		
 
 		glBindVertexArray(VAO);
+
+		
+		// 1. Letra 'J' 
+		
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -4.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(15.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.4f, 0.9f, 3.4f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		model = glm::mat4(1);
-		model = glm::translate(model, glm::vec3(6.0f, 0.0f, .0f));
+		
+		// 2. Letra 'O' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.4f, -2.9f, 0.2f));
+		model = glm::rotate(model, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.1f, 0.9f, 2.1f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		// 3. Letra 'N' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-0.3f, -1.8f, 0.3f));
+		model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.8f, 0.9f, 1.8f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		// 4. Letra 'A' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.3f, -0.9f, -0.2f));
+		model = glm::rotate(model, glm::radians(60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.5f, 0.9f, 1.5f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		 //5. Letra 'T' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-0.4f, 0.0f, 0.6f));
+		model = glm::rotate(model, glm::radians(75.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.2f, 0.9f, 1.2f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		// 6. Letra 'H' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.4f, 0.9f, 0.1f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 0.9f, 1.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		// 7. Letra 'A' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-0.2f, 1.7f, 0.3f));
+		model = glm::rotate(model, glm::radians(105.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		
+		// 8. Letra 'N' 
+		
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.1f, 2.4f, 0.0f));
+		model = glm::rotate(model, glm::radians(120.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.6f, 0.7f, 0.6f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glBindVertexArray(0);
-
 
 
 		
