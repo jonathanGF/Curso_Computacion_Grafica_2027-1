@@ -216,73 +216,73 @@ int main() {
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);//A
 
-		//// ==========================================
-		//// ANTEBRAZO (CODO)
-		//// ==========================================
-		//// 1. Nos desplazamos 1.5 al extremo del bíceps para situar la articulación
-		//model = glm::translate(modelTemp, glm::vec3(1.5f, 0.0f, 0.0f));
-		//// 2. Rotación del codo en el eje Y
-		//model = glm::rotate(model, glm::radians(codo), glm::vec3(0.0f, 1.0f, 0.0f));
-		//// 3. Guardamos checkpoint y nos movemos 1.0 (mitad del largo de 2.0) al centro
-		//modelTemp = model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
-		//// 4. Escalamos a tamaño (2.0, 1.0, 1.0) y dibujamos en rojo
-		//model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.0f));
-		//color = glm::vec3(1.0f, 0.0f, 0.0f);
+		// ==========================================
+		// ANTEBRAZO (CODO)
+		// ==========================================
+		// 1. Nos desplazamos 1.5 al extremo del bíceps para situar la articulación
+		model = glm::translate(modelTemp, glm::vec3(1.5f, 0.0f, 0.0f));
+		// 2. Rotación del codo en el eje Y
+		model = glm::rotate(model, glm::radians(codo), glm::vec3(0.0f, 1.0f, 0.0f));
+		// 3. Guardamos checkpoint y nos movemos 1.0 (mitad del largo de 2.0) al centro
+		modelTemp = model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+		// 4. Escalamos a tamaño (2.0, 1.0, 1.0) y dibujamos en rojo
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.0f));
+		color = glm::vec3(1.0f, 0.0f, 0.0f);
 
-		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		//// ==========================================
-		//// PALMA (MUÑECA)
-		//// ==========================================
-		//// 1. Nos movemos 1.0 (extremo del antebrazo) para situar la muñeca
-		//model = glm::translate(modelTemp, glm::vec3(1.0f, 0.0f, 0.0f));
-		//// 2. Rotación de la muñeca sobre el eje X (giro/torsión)
-		//model = glm::rotate(model, glm::radians(muneca), glm::vec3(1.0f, 0.0f, 0.0f));
-		//// 3. Guardamos en modelTemp2 (base para los dedos) y avanzamos al centro de la palma
-		//modelTemp2 = modelTemp = model = glm::translate(model, glm::vec3(0.25f, 0.0f, 0.0f));
-		//// 4. Escalamos la palma a (0.5, 1.0, 1.0) y asignamos color azul
-		//model = glm::scale(model, glm::vec3(0.5f, 1.0f, 1.0f));
-		//color = glm::vec3(0.0f, 0.0f, 1.0f);
+		// ==========================================
+		// PALMA (MUÑECA)
+		// ==========================================
+		// 1. Nos movemos 1.0 (extremo del antebrazo) para situar la muñeca
+		model = glm::translate(modelTemp, glm::vec3(1.0f, 0.0f, 0.0f));
+		// 2. Rotación de la muñeca sobre el eje X (giro/torsión)
+		model = glm::rotate(model, glm::radians(muneca), glm::vec3(1.0f, 0.0f, 0.0f));
+		// 3. Guardamos en modelTemp2 (base para los dedos) y avanzamos al centro de la palma
+		modelTemp2 = modelTemp = model = glm::translate(model, glm::vec3(0.25f, 0.0f, 0.0f));
+		// 4. Escalamos la palma a (0.5, 1.0, 1.0) y asignamos color azul
+		model = glm::scale(model, glm::vec3(0.5f, 1.0f, 1.0f));
+		color = glm::vec3(0.0f, 0.0f, 1.0f);
 
-		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		//// ==========================================
-		//// DEDO 1 (Superior)
-		//// ==========================================
-		//// 1. Partimos desde el checkpoint de la palma (modelTemp2) y nos colocamos en el extremo superior
-		//model = glm::translate(modelTemp2, glm::vec3(0.25f, 0.35f, 0.0f));
-		//// 2. Rotación de la articulación del dedo 1 sobre el eje Z
-		//model = glm::rotate(model, glm::radians(dedo1), glm::vec3(0.0f, 0.0f, 1.0f));
-		//// 3. Traslación al centro del dedo (mitad de su largo)
-		//model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-		//// 4. Escalado y color (Cian / Celeste)
-		//model = glm::scale(model, glm::vec3(1.0f, 0.25f, 0.25f));
-		//color = glm::vec3(0.0f, 1.0f, 1.0f);
+		// ==========================================
+		// DEDO 1 (Superior)
+		// ==========================================
+		// 1. Partimos desde el checkpoint de la palma (modelTemp2) y nos colocamos en el extremo superior
+		model = glm::translate(modelTemp2, glm::vec3(0.25f, 0.35f, 0.0f));
+		// 2. Rotación de la articulación del dedo 1 sobre el eje Z
+		model = glm::rotate(model, glm::radians(dedo1), glm::vec3(0.0f, 0.0f, 1.0f));
+		// 3. Traslación al centro del dedo (mitad de su largo)
+		model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+		// 4. Escalado y color (Cian / Celeste)
+		model = glm::scale(model, glm::vec3(1.0f, 0.25f, 0.25f));
+		color = glm::vec3(0.0f, 1.0f, 1.0f);
 
-		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		//// ==========================================
-		//// DEDO 2 (Inferior)
-		//// ==========================================
-		//// 1. Partimos nuevamente desde modelTemp2 y nos colocamos en el extremo inferior
-		//model = glm::translate(modelTemp2, glm::vec3(0.25f, -0.35f, 0.0f));
-		//// 2. Rotación de la articulación del dedo 2 sobre el eje Z
-		//model = glm::rotate(model, glm::radians(dedo2), glm::vec3(0.0f, 0.0f, 1.0f));
-		//// 3. Traslación al centro del dedo
-		//model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
-		//// 4. Escalado y color (Magenta / Rosa)
-		//model = glm::scale(model, glm::vec3(1.0f, 0.25f, 0.25f));
-		//color = glm::vec3(1.0f, 0.0f, 1.0f);
+		// ==========================================
+		// DEDO 2 (Inferior)
+		// ==========================================
+		// 1. Partimos nuevamente desde modelTemp2 y nos colocamos en el extremo inferior
+		model = glm::translate(modelTemp2, glm::vec3(0.25f, -0.35f, 0.0f));
+		// 2. Rotación de la articulación del dedo 2 sobre el eje Z
+		model = glm::rotate(model, glm::radians(dedo2), glm::vec3(0.0f, 0.0f, 1.0f));
+		// 3. Traslación al centro del dedo
+		model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
+		// 4. Escalado y color (Magenta / Rosa)
+		model = glm::scale(model, glm::vec3(1.0f, 0.25f, 0.25f));
+		color = glm::vec3(1.0f, 0.0f, 1.0f);
 
-		//glUniform3fv(uniformColor, 1, glm::value_ptr(color));
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 
