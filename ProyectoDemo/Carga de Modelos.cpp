@@ -102,6 +102,10 @@ int main( )
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     Model dog((char*)("Models/RedDog.obj"));
+    Model rocket((char*)("Models/Nave2.obj"));
+    Model rover((char*)("Models/SpaceRover.obj"));
+    Model antena((char*)("Models/SatelliteDish.obj"));
+    Model luna((char*)("Models/PUSHILIN_moon.obj"));
   
 
     // Game loop
@@ -117,7 +121,7 @@ int main( )
         DoMovement();
 
         // Clear the colorbuffer
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.6f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.Use();
@@ -132,17 +136,38 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         dog.Draw(shader);
 
-        // Segundo perro (trasladado)
-        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+       //cohete
+        model = glm::translate(model, glm::vec3(-3.0f, 0.0f, -2.0f));
+        model = glm::scale(model, glm::vec3(0.05f,0.05f,0.05f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        dog.Draw(shader);
+        rocket.Draw(shader);
+
+        //rover
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, -0.5f, -1.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        rover.Draw(shader);
+        //antena
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -6.0f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        antena.Draw(shader);
+        // 5. Luna (Arriba a la izquierda y al fondo)
+        // ==========================================
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(6.0f, 4.5f, -10.0f));
+        model = glm::rotate(model, glm::radians((GLfloat)glfwGetTime() * 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        luna.Draw(shader);
 
         // Swap the buffers
         glfwSwapBuffers(window);
 
-        // Swap the buffers
-        glfwSwapBuffers( window );
+        
     }
     
     glfwTerminate( );
