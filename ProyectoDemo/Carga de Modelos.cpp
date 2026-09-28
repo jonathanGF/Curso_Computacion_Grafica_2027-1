@@ -154,7 +154,7 @@ int main( )
         model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         antena.Draw(shader);
-        // 5. Luna (Arriba a la izquierda y al fondo)
+        // 5. Luna (Arriba a la derecha y al fondo)
         // ==========================================
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(6.0f, 4.5f, -10.0f));
