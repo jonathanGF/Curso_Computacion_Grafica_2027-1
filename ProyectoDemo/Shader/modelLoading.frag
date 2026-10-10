@@ -1,15 +1,20 @@
 #version 330 core
-out vec4 FragColor;
+out vec4 color;
 
 in vec2 TexCoords;
 
 uniform sampler2D texture_diffuse1;
+uniform bool useUniformColor;
+uniform vec3 customColor;
 
 void main()
-{    
-    
-  vec4   texColor= texture(texture_diffuse1, TexCoords);
-    if(texColor.a < 0.1)
-        discard;
-    FragColor = texColor;
+{
+    if (useUniformColor)
+    {
+        color = vec4(customColor, 1.0f);
+    }
+    else
+    {
+        color = texture(texture_diffuse1, TexCoords);
+    }
 }
