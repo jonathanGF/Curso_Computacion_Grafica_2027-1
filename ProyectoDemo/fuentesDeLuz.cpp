@@ -1,5 +1,5 @@
-//  Previo 9 Gonzalez Fernandez Jonathan Uriel
-//  12/10/2026      420051871
+//  Practica 9 Gonzalez Fernandez Jonathan Uriel
+//  17/10/2026      420051871
 
 #include <iostream>
 #include <cmath>
