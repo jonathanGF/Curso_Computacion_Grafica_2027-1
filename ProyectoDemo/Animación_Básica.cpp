@@ -1,5 +1,5 @@
-// Previo 9  Gonzalez Fernandez Jonathan Uriel
-// 19/10/2026  420051871
+// Practica 10  Gonzalez Fernandez Jonathan Uriel
+// 24/10/2026  420051871
 #include <iostream>
 #include <cmath>
 
@@ -36,7 +36,7 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera  camera(glm::vec3(0.0f, 1.5f, 4.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -100,17 +100,24 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 
-// 1. Animación del video base: Rotación sobre el eje Y (Tecla N)[cite: 3]
-float rotBall = 0.0f;
-bool AnimBallRot = false;
+// =========================================================================
+// Variables de control cinemático y alineación orbital
+// =========================================================================
+bool animActiva = false;
 
-// 2. Animación adicional: Vaivén vertical puro (Tecla M)
-float minBallY = 0.01f;      // Límite inferior (nariz del perro)
-float maxBallY = 2.0f;       // Límite superior (fuente de luz pointLightPositions[0].y)
-float posBallY = minBallY;   // Posición vertical actual
-float velBallY = 1.2f;       // Velocidad de desplazamiento vertical
-bool subeBall = true;        // Sentido de traslación
-bool AnimBallMove = false;   // Estado de activación del vaivén
+float radioDog = 1.2f;  // Radio del perro (déjalo fijo)
+float radioBall = 0.80f; // Radio de la pelota (reducido para meterla más al centro)
+float alturaBaseBall = 0.70f;  // Altura normal de vuelo de la pelota
+float desfaseImpacto = 12.0f;  // Compensación angular para impacto frontal en la nariz
+float velGiro = 60.0f;  // Velocidad angular (grados por segundo)
+
+float rotDog = 0.0f;           // Ángulo del perro (inicia a 0 grados, antihorario)
+float rotBall = 180.0f;         // Ángulo de la pelota (inicia opuesta a 180 grados, horario)
+
+float factorImpacto = 0.0f;
+float posBallY = 0.0f;          // Desplazamiento vertical de la pelota
+float posDogY = 0.0f;          // Elevación vertical del perro
+float pitchDog = 0.0f;          // Inclinación del cabezazo en X
 
 // Deltatime
 GLfloat deltaTime = 0.0f;
@@ -118,7 +125,6 @@ GLfloat lastFrame = 0.0f;
 
 int main()
 {
-    // Init GLFW
     glfwInit();
 
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica", nullptr, nullptr);
@@ -133,7 +139,6 @@ int main()
     glfwMakeContextCurrent(window);
     glfwGetFramebufferSize(window, &SCREEN_WIDTH, &SCREEN_HEIGHT);
 
-    // Callbacks
     glfwSetKeyCallback(window, KeyCallback);
     glfwSetCursorPosCallback(window, MouseCallback);
 
@@ -154,7 +159,7 @@ int main()
     Model Piso((char*)"Models/piso.obj");
     Model Ball((char*)"Models/ball.obj");
 
-    // Container VAO y VBO
+    // VAO y VBO
     GLuint VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -162,20 +167,17 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // Attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Set texture units
     lightingShader.Use();
     glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.difuse"), 0);
     glUniform1i(glGetUniformLocation(lightingShader.Program, "Material.specular"), 1);
 
     glm::mat4 projection = glm::perspective(camera.GetZoom(), (GLfloat)SCREEN_WIDTH / (GLfloat)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-    // Game loop
     while (!glfwWindowShouldClose(window))
     {
         GLfloat currentFrame = glfwGetTime();
@@ -203,7 +205,7 @@ int main()
         glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.diffuse"), 0.6f, 0.6f, 0.6f);
         glUniform3f(glGetUniformLocation(lightingShader.Program, "dirLight.specular"), 0.3f, 0.3f, 0.3f);
 
-        // Point light 1
+        // Point light 1 (Modulación de color con barra espaciadora)
         glm::vec3 lightColor;
         lightColor.x = abs(sin(glfwGetTime() * Light1.x));
         lightColor.y = abs(sin(glfwGetTime() * Light1.y));
@@ -242,41 +244,36 @@ int main()
 
         glm::mat4 model(1);
 
-        // Piso
+        // 1. Piso
         model = glm::mat4(1);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         Piso.Draw(lightingShader);
 
-        // Perro
-        model = glm::mat4(1);
+        // 2. Perro: Órbita antihoraria sobre radioOrbita + elevación e inclinación
+        model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(rotDog), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, posDogY, radioDog));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));  // Orientado al frente de carrera
+        model = glm::rotate(model, glm::radians(pitchDog), glm::vec3(1.0f, 0.0f, 0.0f)); // Cabezazo hacia arriba
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
         Dog.Draw(lightingShader);
 
-        // Pelota
-        model = glm::mat4(1);
+        // 3. Pelota: Órbita horaria sobre el MISMO radioOrbita + descenso coordinado
+        model = glm::mat4(1.0f);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
 
-        if (AnimBallMove)
-        {
-            // MODO VAIVÉN: Traslación pura vertical sobre la nariz del perro (Z = 0.5f)
-            // No incluye rotBall, garantizando inicio exacto en la nariz
-            model = glm::translate(model, glm::vec3(0.0f, posBallY, 0.5f));
-        }
-        else
-        {
-            // MODO BASE DEL VIDEO: Rotación pura alrededor de la escena como en la réplica
-            model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
-        }
+        model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, alturaBaseBall + posBallY, radioBall)); // Alineada al radio de la pelota
 
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         Ball.Draw(lightingShader);
         glDisable(GL_BLEND);
         glBindVertexArray(0);
 
-        // Cubo indicador de la lámpara
+        // 4. Cubo de la lámpara
         lampShader.Use();
         modelLoc = glGetUniformLocation(lampShader.Program, "model");
         viewLoc = glGetUniformLocation(lampShader.Program, "view");
@@ -364,7 +361,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
         }
     }
 
-    // Barra Espaciadora: Alternar animación de luz
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
     {
         active = !active;
@@ -374,61 +370,43 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
             Light1 = glm::vec3(0.0f);
     }
 
-    // Tecla N: Alternar rotación base del video[cite: 3]
     if (key == GLFW_KEY_N && action == GLFW_PRESS)
     {
-        AnimBallRot = !AnimBallRot;
-    }
-
-    // Tecla M: Alternar vaivén vertical
-    if (key == GLFW_KEY_M && action == GLFW_PRESS)
-    {
-        AnimBallMove = !AnimBallMove;
-        if (AnimBallMove)
-        {
-            posBallY = minBallY; // Forzar inicio en la nariz
-            subeBall = true;     // Dirección hacia arriba
-        }
+        animActiva = !animActiva;
     }
 }
 
 void Animation()
 {
-    // 1. Animación del video base (Tecla N): Rotación continua[cite: 3]
-    if (AnimBallRot)
+    if (animActiva)
     {
-        rotBall += 0.1f;
-        printf("Rotacion: %.2f | ", rotBall);
-    }
+        // 1. Órbitas concurrentes en sentidos opuestos
+        rotDog += velGiro * deltaTime; // Antihorario
+        rotBall -= velGiro * deltaTime; // Horario
 
-    // 2. Animación adicional (Tecla M): Vaivén vertical puro
-    if (AnimBallMove)
-    {
-        if (subeBall)
+        // Mantiene los ángulos en el intervalo periódico
+        if (rotDog > 360.0f)   rotDog -= 360.0f;
+        if (rotBall < -360.0f) rotBall += 360.0f;
+
+        // 2. Detección de proximidad angular frontal con corrección de desfase
+        float diffAngular = glm::radians((rotDog - rotBall) - desfaseImpacto);
+        float alineacion = glm::max(0.0f, cos(diffAngular));
+
+        // Curva que restringe la deformación cinemática al instante de cruce
+        factorImpacto = glm::pow(alineacion, 4.0f);
+
+        // 3. Pelota: Desciende desde 0.70f hasta 0.35f
+        posBallY = -factorImpacto * 0.40f;
+
+        // 4. Perro: Se levanta 0.25 unidades y cabecea hacia arriba (-22 grados en X)
+        posDogY = factorImpacto * 0.25f;
+        pitchDog = -factorImpacto * 22.0f;
+
+        if (factorImpacto > 0.05f)
         {
-            posBallY += velBallY * deltaTime;
-            if (posBallY >= maxBallY)
-            {
-                posBallY = maxBallY;
-                subeBall = false; // Comienza a descender
-            }
+            printf("Impacto: %.2f | Pelota Y: %.2f | Perro Y: %.2f\n",
+                factorImpacto, alturaBaseBall + posBallY, posDogY);
         }
-        else
-        {
-            posBallY -= velBallY * deltaTime;
-            if (posBallY <= minBallY)
-            {
-                posBallY = minBallY;
-                subeBall = true; // Comienza a subir
-            }
-        }
-
-        printf("Pelota Y: %.2f [%s]", posBallY, subeBall ? "Subiendo" : "Bajando");
-    }
-
-    if (AnimBallRot || AnimBallMove)
-    {
-        printf("\n");
     }
 }
 
