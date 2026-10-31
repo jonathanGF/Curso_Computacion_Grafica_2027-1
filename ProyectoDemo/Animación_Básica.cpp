@@ -127,7 +127,7 @@ int main()
 {
     glfwInit();
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica_Jonathan_Gonzalez", nullptr, nullptr);
 
     if (nullptr == window)
     {
